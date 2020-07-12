@@ -26,16 +26,16 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const sfc_owner = firstStaker; // first address from contract parameters
       const other_address = secondStaker;
       const currentEpoch = await this.stakers.currentEpoch.call();
-      await expectRevert(this.stakers.startLockedUp(currentEpoch, { from: other_address }), "Ownable: caller is not the owner");
-      await this.stakers.startLockedUp(currentEpoch.add(new BN('5')), { from: sfc_owner });
+      await expectRevert(this.stakers.activateLockupFeature(currentEpoch, { from: other_address }), "Ownable: caller is not the owner");
+      await this.stakers.activateLockupFeature(currentEpoch.add(new BN('5')), { from: sfc_owner });
       expect(await this.stakers.firstLockedUpEpoch.call()).to.be.bignumber.equal(currentEpoch.add(new BN('5')));
-      await expectRevert(this.stakers.startLockedUp(currentEpoch.sub((new BN('1'))), { from: sfc_owner }), "can't start in the past");
-      await this.stakers.startLockedUp(currentEpoch, { from: sfc_owner });
+      await expectRevert(this.stakers.activateLockupFeature(currentEpoch.sub((new BN('1'))), { from: sfc_owner }), "can't start in the past");
+      await this.stakers.activateLockupFeature(currentEpoch, { from: sfc_owner });
       expect(await this.stakers.firstLockedUpEpoch.call()).to.be.bignumber.equal(currentEpoch);
       await this.stakers.makeEpochSnapshots(5);
       await this.stakers.makeEpochSnapshots(5);
       const newEpoch = await this.stakers.currentEpoch.call();
-      await expectRevert(this.stakers.startLockedUp(newEpoch, { from: sfc_owner }), "feature was started");
+      await expectRevert(this.stakers.activateLockupFeature(newEpoch, { from: sfc_owner }), "feature was started");
     });
 
     it('should calc ValidatorEpochReward correctly after locked up started', async () => {
@@ -72,7 +72,7 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const sfc_owner = firstStaker;
       const currentEpoch = await this.stakers.currentEpoch.call();
       expect(currentEpoch).to.be.bignumber.equal(new BN("4"));
-      await this.stakers.startLockedUp(currentEpoch, { from: sfc_owner });
+      await this.stakers.activateLockupFeature(currentEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #4
       epoch = new BN('4');
@@ -125,8 +125,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const sfc_owner = firstStaker;
       const currentEpoch = await this.stakers.currentEpoch.call();
       expect(currentEpoch).to.be.bignumber.equal(new BN("4"));
-      const startLockedUpEpoch = new BN("5");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("5");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await expectRevert(this.stakers.lockUpStake(duration, { from: firstStaker }), "feature was not activated");
 
@@ -208,8 +208,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const maxDuration = (new BN('86400')).mul(new BN('365'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -230,8 +230,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const duration = (new BN('86400')).mul(new BN('14'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -252,8 +252,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const duration = (new BN('86400')).mul(new BN('14'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -306,8 +306,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const sfc_owner = firstStaker;
       const currentEpoch = await this.stakers.currentEpoch.call();
       expect(currentEpoch).to.be.bignumber.equal(new BN("4"));
-      const startLockedUpEpoch = new BN("5");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("5");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await expectRevert(this.stakers.lockUpStake(duration, { from: firstStaker }), "feature was not activated");
 
@@ -394,8 +394,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const maxDuration = (new BN('86400')).mul(new BN('365'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -423,8 +423,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const duration = (new BN('86400')).mul(new BN('14'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -466,8 +466,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const duration = (new BN('86400')).mul(new BN('14'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -509,8 +509,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const duration = (new BN('86400')).mul(new BN('14'));
       // start LockedUp
       const sfc_owner = firstStaker;
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 
@@ -591,8 +591,8 @@ contract('SFC', async ([firstStaker, secondStaker, thirdStaker, firstDepositor, 
       const sfc_owner = firstStaker;
       const currentEpoch = await this.stakers.currentEpoch.call();
       expect(currentEpoch).to.be.bignumber.equal(new BN("2"));
-      const startLockedUpEpoch = new BN("2");
-      await this.stakers.startLockedUp(startLockedUpEpoch, { from: sfc_owner });
+      const lockupEpoch = new BN("2");
+      await this.stakers.activateLockupFeature(lockupEpoch, { from: sfc_owner });
 
       await this.stakers.makeEpochSnapshots(10000, false); // epoch #2
 

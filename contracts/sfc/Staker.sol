@@ -915,7 +915,7 @@ contract Stakers is Ownable, StakersConstants {
         emit UpdatedBaseRewardPerSec(value);
     }
 
-    function startLockedUp(uint256 epochNum) onlyOwner external {
+    function activateLockupFeature(uint256 epochNum) onlyOwner external {
         require(epochNum > currentSealedEpoch, "can't start in the past");
         require(firstLockedUpEpoch == 0 || firstLockedUpEpoch > currentSealedEpoch, "feature was started");
         firstLockedUpEpoch = epochNum;
