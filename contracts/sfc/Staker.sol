@@ -921,7 +921,7 @@ contract Stakers is Ownable, StakersConstants {
         firstLockedUpEpoch = epochNum;
     }
 
-    event LockingStake(uint256 indexed stakerID, uint256 fromEpoch, uint256 endTime);
+    event LockedStake(uint256 indexed stakerID, uint256 fromEpoch, uint256 endTime);
 
     function lockUpStake(uint256 lockDuration) external {
         require(firstLockedUpEpoch != 0 && firstLockedUpEpoch <= currentSealedEpoch + 1, "feature was not activated");
@@ -936,7 +936,7 @@ contract Stakers is Ownable, StakersConstants {
             _checkClaimedStaker(stakerID);
         }
         lockedStakes[stakerID] = LockedAmount(currentEpoch(), endTime);
-        emit LockingStake(stakerID, currentEpoch(), endTime);
+        emit LockedStake(stakerID, currentEpoch(), endTime);
     }
 
     event LockingDelegation(address indexed delegator, uint256 indexed stakerID, uint256 fromEpoch, uint256 endTime);
