@@ -939,7 +939,7 @@ contract Stakers is Ownable, StakersConstants {
         emit LockedStake(stakerID, currentEpoch(), endTime);
     }
 
-    event LockingDelegation(address indexed delegator, uint256 indexed stakerID, uint256 fromEpoch, uint256 endTime);
+    event LockedDelegation(address indexed delegator, uint256 indexed stakerID, uint256 fromEpoch, uint256 endTime);
 
     function lockUpDelegation(uint256 lockDuration, uint256 stakerID) external {
         require(firstLockedUpEpoch != 0 && firstLockedUpEpoch <= currentSealedEpoch + 1, "feature was not activated");
@@ -961,7 +961,7 @@ contract Stakers is Ownable, StakersConstants {
             delete delegationEarlyWithdrawalPenalty[delegator][stakerID];
         }
         lockedDelegations[delegator][stakerID] = LockedAmount(currentEpoch(), endTime);
-        emit LockingDelegation(delegator, stakerID, currentEpoch(), endTime);
+        emit LockedDelegation(delegator, stakerID, currentEpoch(), endTime);
     }
 
     event UpdatedDelegation(address indexed delegator, uint256 indexed oldStakerID, uint256 indexed newStakerID, uint256 amount);
